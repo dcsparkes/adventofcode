@@ -1,5 +1,5 @@
 """
-Play game of life on a 3D board
+Play Game of Life on an n-dimensional board
 """
 import inspect
 import logging
@@ -10,8 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 class Cube:
-    def __init__(self, coordinates):
+    """
+    An n-dimensional cube in n-dimensional space.  At the moment this is a superclass, because I haven't written an
+    n-dimensional neighbours() function that nicely yields a series of coordinates.  Recursion is key.
+    """
+
+    def __init__(self, coordinates, n):
         self.coords = coordinates
+        diff = n - len(coordinates)
+        if diff > 0:  # Pad the dimensions of the Cube.
+            self.coords += (0,) * diff
 
     def __repr__(self):
         return "Cube({})".format(str(self.coords))
@@ -26,9 +34,7 @@ class Cube3D(Cube):
     """
 
     def __init__(self, coordinates):
-        if len(coordinates) < 3:
-            raise ValueError("Too few dimensions!")
-        super().__init__(coordinates)
+        super().__init__(coordinates, 3)
 
     def neighbours(self):
         for i in range(self.coords[0] - 1, self.coords[0] + 2):
@@ -43,9 +49,7 @@ class Cube4D(Cube):
     """
 
     def __init__(self, coordinates):
-        if len(coordinates) < 4:
-            raise ValueError("Too few dimensions!")
-        super().__init__(coordinates)
+        super().__init__(coordinates, 4)
 
     def neighbours(self):
         for i in range(self.coords[0] - 1, self.coords[0] + 2):
@@ -55,15 +59,21 @@ class Cube4D(Cube):
                         yield (i, j, k, m)  # includes self to ensure dict entry, but remove for calculation
 
 
-class LifeGame3D:
-    def __init__(self, fileName, iterations=6):
+class LifeGame:
+    def __init__(self, fileName, iterations=6, cubeClass=Cube3D):
         self.activeCubes = []
+        self.neighbourCounts = {}
+        self.cubeClass = cubeClass  # Some sort of type checking: isInstance(Cube)?
         self._populateCubes(fileName)
         self._playGame(iterations)
-        self.neighbourCounts = {}
 
     @classmethod
-    def threeD(cls):
+    def threeD(cls, fileName, iterations=6):
+        return cls(fileName, iterations, cubeClass=Cube3D)
+
+    @classmethod
+    def fourD(cls, fileName, iterations=6):
+        return cls(fileName, iterations, cubeClass=Cube4D)
 
     def _populateCubes(self, fileName):
         logger.debug("Starting: {}.{}: file: {}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name,
@@ -72,7 +82,7 @@ class LifeGame3D:
         for row in base.getInputLines(fileName):
             for colID in range(len(row)):
                 if row[colID] == "#":
-                    self.activeCubes.append(Cube3D((rowID, colID, 0)))
+                    self.activeCubes.append(self.cubeClass((rowID, colID)))  # Cube auto-pads out additional dimensions
             rowID += 1
         logger.debug("Ending: {}.{}: # of cubes: {}".format(
             self.__class__.__name__, inspect.currentframe().f_code.co_name, len(self.activeCubes)))
@@ -98,7 +108,7 @@ class LifeGame3D:
     def _spawnNewCubes(self):
         for coord, value in self.neighbourCounts.items():
             if value == 3:
-                self.activeCubes.append(Cube3D(coord))
+                self.activeCubes.append(self.cubeClass(coord))
 
     def _playGame(self, iterationCount):
         self._populateNeighbourCounts()
@@ -113,22 +123,3 @@ class LifeGame3D:
 
     def getActiveCubeCount(self):
         return len(self.activeCubes)
-
-
-class LifeGame4D(LifeGame3D):
-    def _populateCubes(self, fileName):
-        logger.debug("Starting: {}.{}: file: {}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name,
-                                                        fileName))
-        rowID = 0
-        for row in base.getInputLines(fileName):
-            for colID in range(len(row)):
-                if row[colID] == "#":
-                    self.activeCubes.append(Cube4D((rowID, colID, 0, 0)))
-            rowID += 1
-        logger.debug("Ending: {}.{}: # of cubes: {}".format(
-            self.__class__.__name__, inspect.currentframe().f_code.co_name, len(self.activeCubes)))
-
-    def _spawnNewCubes(self):
-        for coord, value in self.neighbourCounts.items():
-            if value == 3:
-                self.activeCubes.append(Cube4D(coord))

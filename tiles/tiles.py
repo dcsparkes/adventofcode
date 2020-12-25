@@ -85,5 +85,5 @@ class Dealer:
 
     def playGame(fileName):
         for tile in readTiles(fileName):
-            self.tiles.append(tile)
+            self.tiles.insert(tile)
             print(tile)

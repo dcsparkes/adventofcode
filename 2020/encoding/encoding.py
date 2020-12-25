@@ -21,7 +21,7 @@ def findSequence(fileName, total):
     seq = []
     deficit = -total
     for num in getInts(fileName):
-        seq.append(num)    # We know the queue is less than the total so add a new integer
+        seq.append(num)    # We know the queue is less than the total so insert a new integer
         deficit += num     # Track the total
         while deficit > 0:
             deficit -= seq[0]

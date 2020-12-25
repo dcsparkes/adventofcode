@@ -5,7 +5,7 @@ def openInput(fileName):
 
 
 def findPair(total, fileName):
-    """Find the first pair of numbers that add up to total.
+    """Find the first pair of numbers that insert up to total.
     Return pair as tuple."""
 
     counterparts = dict()
@@ -21,7 +21,7 @@ def findPair(total, fileName):
 
 
 def findTriplet(total, fileName):
-    """Find the first triplet of numbers that add up to total.
+    """Find the first triplet of numbers that insert up to total.
     Assumptions: positive integers: i.e. no need to track totals larger than 2000.
     Return triplet as tuple."""
     import bisect

@@ -116,7 +116,7 @@ class Risc():
         pos = start
         unfixed = bool(dests)
         if dests:
-            dests.append(self.haltPos)
+            dests.insert(self.haltPos)
 
         while(pos in instructionsCopy):
             if bin != None:

@@ -1,5 +1,6 @@
 """
-Play Game of Life on an n-dimensional board
+Play Game of Life on an n-dimensional board:
+https://adventofcode.com/2020/day/17
 """
 import inspect
 import logging
@@ -7,25 +8,43 @@ from base import base
 
 logging.basicConfig(filename='../log/lifegame.log', encoding='utf-8', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+logger.setLevel("INFO")
 
 
 class Cube:
     """
-    An n-dimensional cube in n-dimensional space.  At the moment this is a superclass, because I haven't written an
-    n-dimensional neighbours() function that nicely yields a series of coordinates.  Recursion is key.
+    An n-dimensional cube in n-dimensional space.  At the moment this is a superclass, because I haven't tested the
+    n-dimensional neighbours() function that nicely yields a series of coordinates.
     """
+    def __init__(self, coordinates, n=None):
+        """
+        Pad out and truncate the Cube co-ordinates to n-dimensions
+        :param coordinates: tuple containing the co-ordinates.
+        :param n: number of dimensions
+        """
+        if n is None:
+            n = len(coordinates)
 
-    def __init__(self, coordinates, n):
-        self.coords = coordinates
-        diff = n - len(coordinates)
-        if diff > 0:  # Pad the dimensions of the Cube.
-            self.coords += (0,) * diff
+        self.coords = (coordinates + (0,) * n)[:n]
 
     def __repr__(self):
-        return "Cube({})".format(str(self.coords))
+        return "Cube(coordinates={})".format(str(self.coords))
 
     def __str__(self):
         return str(self.coords)
+
+    def neighbours(self):
+        for coord in _neigh(self, coords):
+            yield coord
+
+    def _neigh(self, coords):
+        if not coords:
+            yield tuple()
+        else:
+            for i in range(self.coords[0] - 1, self.coords[0] + 2):
+                for coord in self._neigh(coords[1:]):
+                    yield (i, ) + coord
+
 
 
 class Cube3D(Cube):
@@ -112,14 +131,17 @@ class LifeGame:
 
     def _playGame(self, iterationCount):
         self._populateNeighbourCounts()
-        generation = 0
-        while (generation < 6):
+        cubeCounts = []
+
+        for generation in range(iterationCount):
             self._populateNeighbourCounts()
-            print("Gen {}: {} cubes".format(generation, len(self.activeCubes)))
+            cubeCounts.append(len(self.activeCubes))
             self._evaluateActiveCubes()
             self._spawnNewCubes()
-            generation += 1
-        print("Gen {}: {} cubes".format(generation, len(self.activeCubes)))
+
+        cubeCounts.append(len(self.activeCubes))
+        logger.debug("Ending: {}.{}: Cube counts by generation: {}".format(
+            self.__class__.__name__, inspect.currentframe().f_code.co_name, cubeCounts))
 
     def getActiveCubeCount(self):
         return len(self.activeCubes)

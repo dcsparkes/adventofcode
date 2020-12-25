@@ -46,7 +46,7 @@ class Optree:
                 if ip not in self.unevaluatedWaiting:
                     self.unevaluatedWaiting[ip] = [self]
                 elif self not in self.unevaluatedWaiting[ip]: # and ip in self.unevaluatedWaiting
-                    self.unevaluatedWaiting[ip].append(self)
+                    self.unevaluatedWaiting[ip].insert(self)
             return
 
         elif not self.branches:  # Unary operator

@@ -1,0 +1,13 @@
+0: 4 5 | 5 4
+4: "a"
+5: "b"
+
+abb
+ba
+bab
+a
+b
+ab
+aba
+baa
+

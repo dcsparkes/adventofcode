@@ -1,4 +1,13 @@
+"""
+https://adventofcode.com/2020/day/5
+"""
+
 def decode(code):
+    """
+    Convert seat code into binary and then into int.
+    :param code: str containing position info
+    :return: int ID corresponding to position code
+    """
     return int(code.replace('L', '0').replace('R', '1').replace('F', '0').replace('B', '1'), 2)
 
 def highestSeat(fileName):
@@ -25,17 +34,7 @@ def missingSeat(fileName):
             return prev + 1
         prev = id
 
-# Functions for unittests
-import itertools
 
-def allCodes():
-    return [''.join(row + seat) for row in itertools.product("BF", repeat=7) for seat in itertools.product("LR", repeat=3)]
-
-def allCodesShuffled():
-    return [''.join(row + seat) for row in itertools.product("BF", repeat=7) for seat in itertools.product("LR", repeat=3)]
-
-def encode(num):
-    prefix = format(num // 8, '07b').replace('0', 'F').replace('1', 'B')
-    suffix = format(num % 8, '03b').replace('0', 'L').replace('1', 'R')
-    return ''.join([prefix, suffix])
-
+if __name__ == '__main__':
+    print("Highest Seat ID: {}".format(highestSeat("../input/input2020_05a.txt")))
+    print("Your Seat ID: {}".format(missingSeat("../input/input2020_05a.txt")))

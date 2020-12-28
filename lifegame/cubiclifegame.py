@@ -13,9 +13,10 @@ logger.setLevel("INFO")
 
 class Cube:
     """
-    An n-dimensional cube in n-dimensional space.  At the moment this is a superclass, because I haven't tested the
-    n-dimensional neighbours() function that nicely yields a series of coordinates.
+    An n-dimensional cube in n-dimensional space.  At the moment this is a superclass, because I haven't tested that the
+    n-dimensional neighbours() function nicely yields a series of coordinates.
     """
+
     def __init__(self, coordinates, n=None):
         """
         Pad out and truncate the Cube co-ordinates to n-dimensions
@@ -41,10 +42,9 @@ class Cube:
         if not coords:
             yield tuple()
         else:
-            for i in range(self.coords[0] - 1, self.coords[0] + 2):
+            for i in range(coords[0] - 1, coords[0] + 2):
                 for coord in self._neigh(coords[1:]):
-                    yield (i, ) + coord
-
+                    yield (i,) + coord
 
 
 class Cube3D(Cube):
@@ -79,20 +79,22 @@ class Cube4D(Cube):
 
 
 class LifeGame:
-    def __init__(self, fileName, iterations=6, cubeClass=Cube3D):
+    def __init__(self, fileName=None, cubeClass=Cube3D, spawnRanges=(3,3), surviveRanges=(2, 3)):
         self.activeCubes = []
         self.neighbourCounts = {}
         self.cubeClass = cubeClass  # Some sort of type checking: isInstance(Cube)?
-        self._populateCubes(fileName)
-        self._playGame(iterations)
+        self.spawnRanges = spawnRanges
+        self.surviveRanges = surviveRanges
+        if fileName:
+            self._populateCubes(fileName)
 
     @classmethod
-    def threeD(cls, fileName, iterations=6):
-        return cls(fileName, iterations, cubeClass=Cube3D)
+    def threeD(cls, fileName):
+        return cls(fileName, cubeClass=Cube3D)
 
     @classmethod
-    def fourD(cls, fileName, iterations=6):
-        return cls(fileName, iterations, cubeClass=Cube4D)
+    def fourD(cls, fileName):
+        return cls(fileName, cubeClass=Cube4D)
 
     def _populateCubes(self, fileName):
         logger.debug("Starting: {}.{}: file: {}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name,
@@ -118,7 +120,7 @@ class LifeGame:
     def _evaluateActiveCubes(self):
         for cube in self.activeCubes[:]:
             count = self.neighbourCounts[cube.coords] - 1  # remove 'self' neighbouring
-            if 2 <= count <= 3:  # cube survives
+            if self.surviveRanges[0] <= count <= self.surviveRanges[1]:  # cube survives
                 pass
             else:  # cube dies
                 self.activeCubes.remove(cube)
@@ -126,22 +128,23 @@ class LifeGame:
 
     def _spawnNewCubes(self):
         for coord, value in self.neighbourCounts.items():
-            if value == 3:
+            if self.spawnRanges[0] <= value <= self.spawnRanges[1]:
                 self.activeCubes.append(self.cubeClass(coord))
 
-    def _playGame(self, iterationCount):
-        self._populateNeighbourCounts()
-        cubeCounts = []
-
-        for generation in range(iterationCount):
+    def iteration(self, count):
+        yield self.getActiveCubeCount()
+        for generation in range(count):
             self._populateNeighbourCounts()
-            cubeCounts.append(len(self.activeCubes))
             self._evaluateActiveCubes()
             self._spawnNewCubes()
+            yield self.getActiveCubeCount()
 
-        cubeCounts.append(len(self.activeCubes))
+    def playGame(self, iterationCount):
+        self._populateNeighbourCounts()
+        cubeCounts = [count for count in self.iteration(iterationCount)]
         logger.debug("Ending: {}.{}: Cube counts by generation: {}".format(
             self.__class__.__name__, inspect.currentframe().f_code.co_name, cubeCounts))
+        return cubeCounts
 
     def getActiveCubeCount(self):
         return len(self.activeCubes)

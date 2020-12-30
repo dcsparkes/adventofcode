@@ -1,3 +1,7 @@
+"""
+https://adventofcode.com/2020/day/19
+
+"""
 import unittest
 from tokentree import tokentree
 
@@ -178,14 +182,41 @@ class TestRuleTree(unittest.TestCase):
 
 
 class TestPlanter(unittest.TestCase):
-    fInput = "input2020_19a.txt"
+    fInputA = "input2020_19a.txt"
+    fInputB = "input2020_19b.txt"  # Hack to include self-referential rules. Could try to figure out how to loop trees?
     fTestA = "test2020_19a.txt"
     fTestB = "test2020_19b.txt"
-    fTestC = "test2020_19b.txt"
+    fTestC = "test2020_19c.txt"
+    fTestD = "test2020_19d.txt"
+    fTestE = "test2020_19e.txt"
 
-    def test_Planter_fInput(self):
-        p = tokentree.Planter(self.fInput)
+    # def test_Planter_fInputA(self):
+    #     p = tokentree.Planter(self.fInputA)
+    #     self.assertEqual(144, len(p.tokensValid))
+
+    def test_Planter_fTestA(self):
+        p = tokentree.Planter(self.fTestA)
         self.assertEqual(2, len(p.tokensValid))
+
+    def test_Planter_fTestA_root2_knownBad(self):
+        p = tokentree.Planter(self.fTestA, rootRule="2")
+        self.assertTrue("aa" in p.tokenValidator, "aa")
+        self.assertTrue("bb" in p.tokenValidator, "bb")
+
+    def test_Planter_fTestA_root2_knownGood(self):
+        p = tokentree.Planter(self.fTestA, rootRule="2")
+        self.assertFalse("ab" in p.tokenValidator, "ab")
+        self.assertFalse("ba" in p.tokenValidator, "ba")
+
+    def test_Planter_fTestA_root3_knownGood(self):
+        p = tokentree.Planter(self.fTestA, rootRule="3")
+        self.assertFalse("aa" in p.tokenValidator, "aa")
+        self.assertFalse("bb" in p.tokenValidator, "bb")
+
+    def test_Planter_fTestA_root3_knownBad(self):
+        p = tokentree.Planter(self.fTestA, rootRule="3")
+        self.assertTrue("ab" in p.tokenValidator, "ab")
+        self.assertTrue("ba" in p.tokenValidator, "ba")
 
     def test_Planter_fTestB(self):
         p = tokentree.Planter(self.fTestB)
@@ -195,29 +226,13 @@ class TestPlanter(unittest.TestCase):
         p = tokentree.Planter(self.fTestC)
         self.assertEqual(2, len(p.tokensValid))
 
-    def test_Planter_fTest_root2_knownBad(self):
-        p = tokentree.Planter(self.fTestA, rootRule="2")
-        self.assertTrue("aa" in p.tokenValidator, "aa")
-        self.assertTrue("bb" in p.tokenValidator, "bb")
+    def test_Planter_fTestD(self):
+        p = tokentree.Planter(self.fTestD)
+        self.assertEqual(3, len(p.tokensValid))
 
-    def test_Planter_fTest_root2_knownGood(self):
-        p = tokentree.Planter(self.fTestA, rootRule="2")
-        self.assertFalse("ab" in p.tokenValidator, "ab")
-        self.assertFalse("ba" in p.tokenValidator, "ba")
-
-    def test_Planter_fTest_root3_knownGood(self):
-        p = tokentree.Planter(self.fTestA, rootRule="3")
-        self.assertFalse("aa" in p.tokenValidator, "aa")
-        self.assertFalse("bb" in p.tokenValidator, "bb")
-
-    def test_Planter_fTest_root3_knownBad(self):
-        p = tokentree.Planter(self.fTestA, rootRule="3")
-        self.assertTrue("ab" in p.tokenValidator, "ab")
-        self.assertTrue("ba" in p.tokenValidator, "ba")
-
-    def test_Planter_fTestA(self):
-        p = tokentree.Planter(self.fTestA)
-        self.assertEqual(2, len(p.tokensValid))
+    def test_Planter_fTestE(self):
+        p = tokentree.Planter(self.fTestE)
+        self.assertEqual(12, len(p.tokensValid))
 
     def test_Planter_knownBadStrings(self):
         p = tokentree.Planter(self.fTestA)
@@ -228,6 +243,8 @@ class TestPlanter(unittest.TestCase):
         p = tokentree.Planter(self.fTestA)
         for s in ["ababbb", "abbbab"]:
             self.assertTrue(s in p.tokenValidator, s)
+
+
 
 
 if __name__ == '__main__':

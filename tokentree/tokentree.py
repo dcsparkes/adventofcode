@@ -84,6 +84,10 @@ class TokenTrie:
     def __len__(self):
         return 1 + sum([len(v) for k, v in self.branches.items()])
 
+    def __repr__(self):
+        return "{}(branches={}, isTerminal={})".format(self.__class__.__name__, list(self.branches.keys()),
+                                                       self.isTerminal)
+
     def insert(self, token):
         """
         Insert the token into the tree as a valid terminal.
@@ -109,15 +113,14 @@ class RuleSet:
 
     def __init__(self, text=None, ruleID=None):
         self.waiting = set()
+        self.id = ruleID
+        self.terminals = None
+        self.nonTerminals = []
         if text:
-            self.id = ruleID
-            self.terminals = None
-            self.nonTerminals = []
-            if text:
-                self._parse(text)
-                logger.debug(
-                    "{}.{}: {}\n{}\n{}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name, text,
-                                               self, repr(self)))
+            self._parse(text)
+            logger.debug(
+                "{}.{}: {}\n{}\n{}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name, text,
+                                           self, repr(self)))
 
     def __repr__(self):
         params = ', '.join(
@@ -165,7 +168,7 @@ class Planter:
         for rule in rules:
             for match in rule:
                 if match not in self.waitingLists:
-                    self.waitingLists[match] = set(nodeID)
+                    self.waitingLists[match] = set([nodeID])
                 else:
                     self.waitingLists[match].add(nodeID)
 
@@ -194,8 +197,8 @@ class Planter:
         :param rootRule: root id of trie
         :return: None?
         """
-        newlyEvaluated = list(self.nodesEvaluated.keys())  # Should contain all the 'leaves'.
-        hack = True
+        # Initiate newlyEvaluated with the evaluated RuleSets: i.e. rules from _parseFile that are terminals.
+        newlyEvaluated = set(self.nodesEvaluated.keys())  # Should contain all the 'leaves'.
 
         while newlyEvaluated and rootRule not in self.nodesEvaluated:
             logger.debug("{}.{}: Starting while loop: newlyEvaluated = {}: self.nodesEvaluated = {}: "
@@ -212,36 +215,41 @@ class Planter:
                     logger.warning(
                         "{}.{}: {} not in {}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name,
                                                      nodeID, self.waitingLists))
+            # Winnow candidates down to those waiting for newly evaluated/not waiting for unevaluated.
+            for candidate in candidates:
+                self.nodesUnevaluated[candidate].waiting -= newlyEvaluated
+
+            candidates = [c for c in candidates if not self.nodesUnevaluated[c].waiting]
+
             newlyEvaluated.clear()
             logger.info("{}.{}: Starting while loop: , candidates not in nodesUnevaluated: {}, candidates = {}".format(
                 self.__class__.__name__, inspect.currentframe().f_code.co_name,
                 [c for c in candidates if c not in self.nodesUnevaluated], candidates))
 
-            for idCandidate in [c for c in candidates if c in self.nodesUnevaluated]:
-                unresolvedNonTerminals = []
-                node = self.nodesUnevaluated[idCandidate]
+            # for idCandidate in [c for c in candidates if c in self.nodesUnevaluated]:
+            for candidate in candidates:
+                node = self.nodesUnevaluated.pop(candidate)
                 logger.debug(
                     "{}.{}: node = {}".format(self.__class__.__name__, inspect.currentframe().f_code.co_name, node))
                 for rule in node.nonTerminals:
                     treeTmp = None
                     for nodeID in rule:
                         if nodeID not in self.nodesEvaluated:
-                            unresolvedNonTerminals.append(rule)
-                            treeTmp = None
-                            break
+                            raise ValueError("{}: nodeID {} not in self.nodesEvaluated.".format(candidate, nodeID))
                         elif treeTmp is None:
                             treeTmp = TokenTrie()
                             treeTmp |= self.nodesEvaluated[nodeID]
                         else:
-                            treeTmp += self.nodesEvaluated[nodeID]
+                            treeTmp += self.nodesEvaluated[nodeID]  # This is inordinately slow.
 
                     if treeTmp:
                         node.terminals |= treeTmp
 
-                if not unresolvedNonTerminals:
-                    newlyEvaluated.append(node.id)
-                    self.nodesEvaluated[node.id] = node.terminals
-                node.nonTerminals = unresolvedNonTerminals
+                newlyEvaluated.add(node.id)
+                self.nodesEvaluated[node.id] = node.terminals
+
+                node.nonTerminals.clear()
+
 
         if rootRule not in self.nodesEvaluated:
             logger.warning("{}.{}: rootRule not evaluated. Waiting Lists:\n{}\nUnevaluated:\n{}".format(
@@ -257,4 +265,7 @@ class Planter:
         return self.tokenValidator and token in self.tokenValidator
 
     def validateTokens(self):
-        self.tokensValid = [t for t in self.tokensUnvalidated if t in self.tokenValidator]
+        if self.tokenValidator:
+            self.tokensValid = [t for t in self.tokensUnvalidated if t in self.tokenValidator]
+
+

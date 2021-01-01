@@ -22,12 +22,12 @@ def readHands(fileName):
 
 def playGame(fileName):
     hands = [hand for hand in readHands(fileName)]
-    print(hands)
+    # print(hands)
     while hands[0] and hands[1]:
         round = [hand.pop() for hand in hands]
         winner = round.index(max(round))
         hands[winner] = sorted(round) + hands[winner]
-        print(hands)
+        # print(hands)
 
     return score(hands[winner])
 
@@ -35,18 +35,18 @@ def playGame(fileName):
 def playRecursiveSubgame(hands, gameID):
     histories = [[], []]
     while hands[0] and hands[1]:
-        print("GAME {}: {}".format(gameID, hands), end ='')
+        # print("GAME {}: {}".format(gameID, hands), end ='')
         handLengths = []
         for i in range(len(hands)):
             if hands[i] in histories[i]:
-                print("\nLoop Detected: {} in {}".format(hands[i], histories[i]))
+                # print("\nLoop Detected: {} in {}".format(hands[i], histories[i]))
                 return 0
             else:
                 histories[i].append(hands[i][:])
                 handLengths.append(len(hands[i]))
 
         round = [hand.pop() for hand in hands]
-        print(round)
+        # print(round)
         if False in [round[i] < handLengths[i] for i in range(len(round))]:
             winner = round.index(max(round))
         else:
@@ -59,7 +59,7 @@ def playRecursiveSubgame(hands, gameID):
 def playRecursiveGame(fileName):
     hands = [hand for hand in readHands(fileName)]
     winner = playRecursiveSubgame(hands, 1)
-    print(hands[winner])
+    # print(hands[winner])
     return score(hands[winner])
 
 
@@ -76,5 +76,5 @@ if __name__ == '__main__':
     testName = "test2020_22a.txt"
     inputName = "input2020_22a.txt"
 
-    # print(playGame(inputName))
-    print(playRecursiveGame(inputName))
+    print("Part 1: {}".format(playGame(inputName)))
+    print("Part 2: {}".format(playRecursiveGame(inputName)))

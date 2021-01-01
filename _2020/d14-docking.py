@@ -1,3 +1,6 @@
+"""
+https://adventofcode.com/2020/day/14
+"""
 import unittest
 from base import base
 
@@ -93,7 +96,9 @@ class TestMemBank_v2(unittest.TestCase):
 
     def test_MemBank_fInput1a(self):
         mb = MemBank_v2(self.fInput1a)
-        self.assertEqual(5579916171823, mb.total())
+        total = mb.total()
+        print("Part 2: {}".format(total))
+        self.assertEqual(5579916171823, total)
 
     def test_MemBank_fTest1b(self):
         mb = MemBank_v2(self.fTest1b)
@@ -121,7 +126,9 @@ class TestMemBank_v1(unittest.TestCase):
 
     def test_MemBank_fInput1a(self):
         mb = MemBank_v1(self.fInput1a)
-        self.assertEqual(13727901897109, mb.total())
+        total = mb.total()
+        print("Part 1: {}".format(total))
+        self.assertEqual(13727901897109, total)
 
     def test_MemBank_fTest1a(self):
         mb = MemBank_v1(self.fTest1a)

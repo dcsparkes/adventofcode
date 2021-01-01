@@ -1,3 +1,6 @@
+"""
+https://adventofcode.com/2020/day/24
+"""
 import unittest
 from lobbylayout import lobbylayout
 
@@ -12,7 +15,7 @@ class TestLifeGame2DHex(unittest.TestCase):
         self.assertEqual([10, 15, 12, 25, 14, 23, 28, 41, 37, 49, 37], genCounts)
 
     def test_play_fInput_100sliced(self):
-        expectedCounts = [10, 37, 132, 259, 406, 566, 788, 1106, 1373, 1844, 2208]
+        expectedCounts = [282, 337, 553, 745, 1086, 1389, 1776, 2071, 2482, 3035, 3445]
         ts = lobbylayout.TileSet(self.fInput)
         genCounts = ts.playGame(100)
         self.assertEqual(expectedCounts, genCounts[0::10])

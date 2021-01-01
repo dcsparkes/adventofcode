@@ -1,3 +1,6 @@
+"""
+https://adventofcode.com/2020/day/25
+"""
 from encryptionkeys import encryptionkeys
 import unittest
 
@@ -16,7 +19,8 @@ class TestEncryptionKeyFinder(unittest.TestCase):
 
     def test_calculateEncryptionKey_input(self):
         ekf = encryptionkeys.EncryptionKeyFinder(*self.keysPublic_input)
-        self.assertEqual(14897079, ekf.encryptionKey)
+        self.assertEqual(17032383, ekf.encryptionKey)
+
 
 class TestTransformSequence(unittest.TestCase):
     keyPublic1 = 5764801
@@ -37,19 +41,19 @@ class TestTransformSequence(unittest.TestCase):
             key = next(ts)
         self.assertEqual(self.keyPublic2, key)
 
-    def test_iter_encryptionkeys_1_2(self):
+    def test_iter_encryptionKeys_1_2(self):
         ts = encryptionkeys.TransformSequence(subject=self.keyPublic1)
         for i in range(self.loopSize2):
             key = next(ts)
         self.assertEqual(self.encryptionKey, key)
 
-    def test_iter_encryptionkeys_2_1(self):
+    def test_iter_encryptionKeys_2_1(self):
         ts = encryptionkeys.TransformSequence(subject=self.keyPublic2)
         for i in range(self.loopSize1):
             key = next(ts)
         self.assertEqual(self.encryptionKey, key)
 
-    def test_iter_encryptionkeysMatch_knownLoopSizes(self):
+    def test_iter_encryptionKeysMatch_knownLoopSizes(self):
         ts1 = encryptionkeys.TransformSequence(subject=self.keyPublic1)
         ts2 = encryptionkeys.TransformSequence(subject=self.keyPublic2)
         for i in range(self.loopSize2):

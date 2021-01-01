@@ -36,9 +36,6 @@ class EncryptionKeyFinder:
         keyCount = len(publicKeys)
         loopSizes = [0] * keyCount
         count = 0
-
-        print(loopSizes)
-        print(publicKeys)
         ts = TransformSequence()
 
         for value in TransformSequence():

@@ -1,3 +1,6 @@
+"""
+https://adventofcode.com/2020/day/15
+"""
 import unittest
 
 
@@ -10,16 +13,14 @@ class MemoryGame:
         :param current number:
         :return: next number
         """
-        # print("{}: {} : {}".format(turn, number, self.memory))
         numNext = 0
         if number in self.memory:
             numNext = turn - self.memory[number]
         self.memory[number] = turn
         return numNext
 
-    def play(self, stream, gameEnd=2020):
+    def play(self, stream, gameEnd=2020, outLoud=False):
         self.memory = {}
-        # print("Starting numbers: {}".format(stream))
         turn = 0
         nextSaid = None
 
@@ -31,7 +32,8 @@ class MemoryGame:
             turn += 1
             nextSaid = self.say(nextSaid, turn)
 
-        print("{}th numbers: {}".format(gameEnd, nextSaid))
+        if outLoud:
+            print("{}th numbers: {}".format(gameEnd, nextSaid))
         return nextSaid
 
     def write(self, address, value, masks):
@@ -39,7 +41,7 @@ class MemoryGame:
 
 
 class TestMemBank_v2(unittest.TestCase):
-    gameInput = (240, None, [14, 8, 16, 0, 1, 17])
+    gameInput = (240, 505, [14, 8, 16, 0, 1, 17])
     gameTest0 = (436, 175594, [0, 3, 6])
     gameTest1 = (1, 2578, [1, 3, 2])
     gameTest2 = (10, 3544142, [2, 1, 3])
@@ -51,12 +53,12 @@ class TestMemBank_v2(unittest.TestCase):
     def test_MemoryGame_gameInput_2020(self):
         result2k2, result3e7, game = self.gameInput
         mg = MemoryGame()
-        self.assertEqual(result2k2, mg.play(game))
+        self.assertEqual(result2k2, mg.play(game, outLoud=True))
 
     def test_MemoryGame_gameInput_3e7(self):
         result2k2, result3e7, game = self.gameInput
         mg = MemoryGame()
-        self.assertEqual(result3e7, mg.play(game, 3 * (10 ** 7)))
+        self.assertEqual(result3e7, mg.play(game, 3 * (10 ** 7), outLoud=True))
 
     def test_MemoryGame_gameTest0_2020(self):
         result2k2, result3e7, game = self.gameTest0
@@ -92,7 +94,6 @@ class TestMemBank_v2(unittest.TestCase):
         result2k2, result3e7, game = self.gameTest6
         mg = MemoryGame()
         self.assertEqual(result2k2, mg.play(game))
-
 
 
 if __name__ == '__main__':

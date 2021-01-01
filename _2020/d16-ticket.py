@@ -134,8 +134,8 @@ class TicketValidator:
             self.generateColumnHeaders()
 
         departures = [b for a, b in zip(self.columnHeaders, self.myTicket) if str(a)[:9] == "departure"]
-        print(departures)
-        print(math.prod(departures))
+        # print(departures)
+        # print(math.prod(departures))
 
         return math.prod(departures)
 
@@ -196,6 +196,7 @@ class TestTicketValidator(unittest.TestCase):
         tv = TicketValidator()
         tv.readInput(self.fInput1a)
         total = tv.calculateDepartureMultiple()
+        print("Departure Field Total: {}".format(total))
         self.assertEqual(3029180675981, total)
 
     def test_MemBank_calculateDepartureTotal_fInput1a_knownWrongAnswers(self):
@@ -208,6 +209,7 @@ class TestTicketValidator(unittest.TestCase):
     def test_MemBank_invalidTicketCheck_fInput1a(self):
         tv = TicketValidator()
         tv.readInput(self.fInput1a)
+        print("Invalid Ticket Num: {}".format(tv.invalidValueSum))
         self.assertEqual(29851, tv.invalidValueSum)
 
     def test_MemBank_invalidTicketCheck_fTest1a(self):

@@ -43,7 +43,6 @@ def evaluateUnparenthesisedLefttoRight(statement):
     while match:
         partiallyParsed = ''.join([str(eval(match.group(1))), match.group(2)])
         match = re.match(matchString, partiallyParsed)
-
     return partiallyParsed
 
 
@@ -82,11 +81,15 @@ class TestParse(unittest.TestCase):
     knownAnswers6 = ("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2", 13632)
     knownAnswers7 = ("1 * 12 + 13 * 1", 25)
 
-    def test_parseFile_AddthenMultiply_knownAnswers1(self):
-        self.assertEqual(351175492232654, parseFile(self.fInput1a, evaluateUnparenthesisedAddthenMultiply))
+    def test_parseFile_AddthenMultiply_unknownAnswers1(self):
+        answer = parseFile(self.fInput1a, evaluateUnparenthesisedAddthenMultiply)
+        print("Part2: {}".format(answer))
+        self.assertEqual(351175492232654, answer)
 
-    def test_parseFile_LtoR_knownAnswers1(self):
-        self.assertEqual(16332191652452, parseFile(self.fInput1a))
+    def test_parseFile_LtoR_unknownAnswers1(self):
+        answer = parseFile(self.fInput1a)
+        print("Part1: {}".format(answer))
+        self.assertEqual(16332191652452, answer)
 
     def test_parse_AddthenMultiply_knownAnswers1(self):
         statement, expected = self.knownAnswers1
@@ -115,7 +118,7 @@ class TestParse(unittest.TestCase):
     def test_parse_AddthenMultiply_knownAnswers6(self):
         statement, expected = self.knownAnswers6
         expected = "23340"
-        print("LOGGER LEVEL = {}".format(logger.level))
+        # print("LOGGER LEVEL = {}".format(logger.level))
         oldLoggerLevel = logger.level
         logger.setLevel("DEBUG")
         self.assertEqual(str(expected), parse(statement, evaluateUnparenthesisedAddthenMultiply))
@@ -173,4 +176,4 @@ class TestParse(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
     # statement = "1 + 2 * 3 + 4 * 5 + 6"
-    # parse(statement)
+    parse(statement)

@@ -33,6 +33,49 @@ def spiralDistance(num):
     sideDist = abs(sidePos - midPoint)
     return ringID + sideDist
 
+
+def coordSequence():
+    x_move = 1
+    y_move = -1
+    xPos = 0
+    yPos = 0
+    moveCount = 1
+    while True:
+        for _ in range(moveCount):
+            yield xPos, yPos
+            xPos += x_move
+        x_move = -x_move
+        for _ in range(moveCount):
+            yield xPos, yPos
+            yPos += y_move
+        y_move = -y_move
+        moveCount += 1
+
+
+def neighbourCoords(x, y):
+    for m in range(x - 1, x + 2):
+        for n in range(y - 1, y + 2):
+            yield m, n
+
+
+def spiralValues():
+    calculated = set([(0, 0)])
+    valueDict = {(0, 0): 1}
+    for coord in coordSequence():
+        value = valueDict[coord]
+        calculated.add(coord)
+        yield value
+        for n in neighbourCoords(*coord):
+            if n not in calculated:
+                if n in valueDict:
+                    valueDict[n] += value
+                else:
+                    valueDict[n] = value
+
+
 if __name__ == '__main__':
     print("Part 1: {}".format(spiralDistance(368078)))
-
+    for val in spiralValues():
+        if val > 368078:
+            print("Part 2: {}".format(val))
+            break

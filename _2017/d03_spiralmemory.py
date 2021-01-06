@@ -27,13 +27,10 @@ def spiralDistance(num):
     if not ringID:
         return 0
     bottomRange = (2 * ringID - 1) ** 2
-    topRange = (2 * ringID + 1) ** 2
-    sideLen = (topRange - bottomRange) // 4
+    sideLen = 2 * ringID
     sidePos = (num - bottomRange) % sideLen
-    midPoint = sideLen // 2
+    midPoint = ringID
     sideDist = abs(sidePos - midPoint)
-    print("num: {}, ringID: {}, bottomRange: {}, topRange: {}, sideLen: {}, sidePos: {}, midPoint: {}, sideDist: {}".format(
-        num, ringID, bottomRange, topRange, sideLen, sidePos, midPoint, sideDist))
     return ringID + sideDist
 
 if __name__ == '__main__':

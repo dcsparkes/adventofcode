@@ -1,5 +1,7 @@
 # import logging
 import pathlib
+
+
 # from logging.handlers import RotatingFileHandler
 
 
@@ -20,7 +22,10 @@ def getInputLines(name, delimiter=None, func=None):
     with q.open() as inFile:
         for line in inFile:
             if delimiter is None:
-                yield line.strip()
+                if func:
+                    yield func(line.strip())
+                else:
+                    yield line.strip()
             else:
                 for element in line.strip().split(delimiter):
                     if func:

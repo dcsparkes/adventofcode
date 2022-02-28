@@ -57,7 +57,7 @@ LOW, BOTH, HIGH = range(-1, 2)
 
 def splitLists(binaries, select=BOTH):
     """
-    Recursive function to select either the most frequent digit or least frequent or both (root of tree).
+    Recursive select either the most frequent digit at each position or the least frequent or both (root of tree).
 
     :param binaries: list of binary strings
     :param select: Selection criteria
@@ -67,7 +67,6 @@ def splitLists(binaries, select=BOTH):
     logging.debug("{}({}, select={})".format(sys._getframe().f_code.co_name, binaries, select))
 
     returnStrings = []
-    print(binaries)
     sortStore = {}
     if len(binaries) == 0:  # If there are no strings then the empty string is appropriate
         if select == BOTH:
@@ -113,7 +112,7 @@ def lifeSupportRating(fileName):
 
 if __name__ == '__main__':
     logging.basicConfig(filename="../log/2021_d03.log", encoding='utf-8', level=logging.WARNING)
-    # print("Test:  " + powerConsumption("../input/test2021_03a.txt"))
-    # print("Input: " + powerConsumption("../input/input2021_03a.txt"))
+    print("Test:  " + powerConsumption("../input/test2021_03a.txt"))
+    print("Input: " + powerConsumption("../input/input2021_03a.txt"))
     print("Test:  " + lifeSupportRating("../input/test2021_03a.txt"))
     print("Input: " + lifeSupportRating("../input/input2021_03a.txt"))

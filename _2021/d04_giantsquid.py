@@ -7,7 +7,7 @@ from bingo import bingo
 # import sys
 
 if __name__ == '__main__':
-    # logging.basicConfig(filename="../log/2021_d05.log", encoding='utf-8', level=logging.WARNING)
+    # logging.basicConfig(filename="../log/2021_d04.log", encoding='utf-8', level=logging.WARNING)
     fInput = "input2021_04a.txt"
     game = bingo.Game(fInput)
     win, lose = game.playSequence()

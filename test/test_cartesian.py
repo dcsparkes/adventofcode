@@ -59,7 +59,7 @@ class TestComplexTracker(unittest.TestCase):
     def test_WaypointTracker_fInputShipA(self):
         t = cartesian.WaypointTracker()
         t.readDirections(self.fInputShipA)
-        self.assertEqual(582, t.getDistance())
+        self.assertEqual(52069, t.getDistance())
 
     def test_WaypointTracker_fTestShipA(self):
         t = cartesian.WaypointTracker()

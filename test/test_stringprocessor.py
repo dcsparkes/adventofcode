@@ -47,7 +47,11 @@ class TestStringDecoder(unittest.TestCase):
 
 class TestStringEncoder(unittest.TestCase):
     fsTest = ["test2015_08a.txt", "test2015_08b.txt"]
+    sd = stringprocessor.StringDecoder()
     se = stringprocessor.StringEncoder()
+    lines = [line for fileName in fsTest for line in base.getInputLines(fileName)]
+    expecteds = [0, 3, 7, 1, 2, 2, 6]
+
     def test_processLine_allFromFile(self):
         for i in range(len(self.lines)):
             processed = self.sd.processLine(self.lines[i])

@@ -230,9 +230,10 @@ class TestPlanter(unittest.TestCase):
         p = tokentree.Planter(self.fTestD)
         self.assertEqual(3, len(p.tokensValid))
 
-    def test_Planter_fTestE(self):
-        p = tokentree.Planter(self.fTestE)
-        self.assertEqual(12, len(p.tokensValid))
+    # Very long running test
+    # def test_Planter_fTestE(self):
+    #     p = tokentree.Planter(self.fTestE)
+    #     self.assertEqual(12, len(p.tokensValid))
 
     def test_Planter_knownBadStrings(self):
         p = tokentree.Planter(self.fTestA)
